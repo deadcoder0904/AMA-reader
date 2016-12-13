@@ -5,15 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
 			.then(data => data.json());
 
 	const displayData = (data) => {
-		console.log(data);
 		const arr = [];
 
 		for (let item of data) {
-			const {avatar, description, fullname, link, username} = item;
+			const {avatar, description, fullname, username} = item;
 
 			const block = `
 				<div class="items fl pa4 tc">
-			  	<a href="${link}" target="_blank"><img src="${avatar}" class="img br-100 pa1 ba b--black-10 h4 w4 pointer" alt="${username}" onerror="this.src='https://github.com/sindresorhus.png?size=200'" title="Read AMA" /></a><br />
+			  	<img src="${avatar}" class="avatar-img br-100 pa1 ba b--black-10 h4 w4 pointer" alt="${username}" onerror="this.src='https://github.com/sindresorhus.png?size=200'" title="Read AMA" /><br />
 				  <a href="https://github.com/${username}" target="_blank" class="link white" title="Visit GitHub Profile">@${fullname}</a>
 					<blockquote class="desc">${description}</blockquote>
 				</div>
@@ -46,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	const input = document.getElementsByName('search-input');
 	const nooby = document.getElementById('nooby');
 	const awe = document.getElementById('awe');
-	const img = document.getElementsByClassName('img');
+	const avatar = document.getElementsByClassName('avatar-img');
 	toggleDisplay(awesomeAmas,'none');
 	toggleDisplay(amaList,'none');
 
@@ -55,8 +54,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		toggleDisplay(nooby,'none');
 	});
 
-	Array.from(img).map(a =>
-			a.addEventListener('click',() => {
+	Array.from(avatar).map(img =>
+			img.addEventListener('click',body,() => {
+				console.log('hi');
 				toggleDisplay(awesomeAmas,'none');
 				toggleDisplay(amaList,'block');
 		})

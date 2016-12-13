@@ -4,6 +4,16 @@
 
 First, install all modules using `yarn`, then build script using `yarn start`, then open `index.html` while running ES7 in the browser.
 
+# Screenshots
+
+### (1) FrontPage
+
+![](http://imgur.com/lbkIweI.png)
+
+### (2) Awesome AMAs
+
+![](http://imgur.com/JRapZoF.png)
+
 ## License
 
 [MIT](LICENSE.md) © [Akshay Kadam](https://github.com/deadcoder0904)
