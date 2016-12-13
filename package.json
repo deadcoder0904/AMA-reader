@@ -1,0 +1,20 @@
+{
+  "name": "html5-css3-jquery-tachyons-es6",
+  "version": "1.0.0",
+  "description": "HTML5 Boilerplate with ES6 features",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify js/app.js -t babelify -o js/app.dist.js",
+    "watch": "watchify js/app.js -t babelify -o js/app.dist.js",
+    "start": "google-chrome index.html"
+  },
+  "author": "Akshay Kadam <akshaykadam0904@gmail.com> (http://deadcoder0904.github.io/)",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-preset-es2017": "^6.16.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.1",
+    "watchify": "^3.7.0"
+  }
+}

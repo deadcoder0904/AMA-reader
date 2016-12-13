@@ -1,0 +1,17 @@
+html {
+	background: radial-gradient(rgb(81, 223, 181), rgb(49, 33, 151));
+	height: 100%;
+}
+
+body {
+	font-family: 'Open Sans', sans-serif;
+}
+
+.box {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.items {
+	flex: 1;
+}
