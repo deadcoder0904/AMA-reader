@@ -15,3 +15,16 @@ body {
 .items {
 	flex: 1;
 }
+
+.q {
+}
+
+.a {
+	display: none;
+	transform: all 1s;
+}
+
+.a.active {
+	display: block;
+	transition: all 1s;
+}

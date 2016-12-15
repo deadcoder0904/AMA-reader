@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-	const fetchData = () =>
+	const fetchPopularAMAs = () =>
 		fetch('https://raw.githubusercontent.com/deadcoder0904/scrape-amas/master/amas.json')
 			.then(data => data.json());
 
-	const displayData = (data) => {
+	const displayPopularAMAs = (data) => {
 		const arr = [];
 
 		for (let item of data) {
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			const block = `
 				<div class="items fl pa4 tc">
-			  	<img src="${avatar}" class="avatar-img br-100 pa1 ba b--black-10 h4 w4 pointer" alt="${username}" onerror="this.src='https://github.com/sindresorhus.png?size=200'" title="Read AMA" /><br />
+			  	<img src="${avatar}" class="avatar-img br-100 pa1 ba b--black-10 h4 w4 pointer" alt="${username}" onerror="this.src='https://avatars0.githubusercontent.com/u/1597919?v=3&s=88'" title="Read AMA" /><br />
 				  <a href="https://github.com/${username}" target="_blank" class="link white" title="Visit GitHub Profile">@${fullname}</a>
 					<blockquote class="desc">${description}</blockquote>
 				</div>
@@ -23,20 +23,21 @@ document.addEventListener('DOMContentLoaded', function () {
 		temporary.className = 'box';
 		temporary.innerHTML = arr.join('');
 		awesomeAmas.insertBefore(temporary,awesomeAmas.lastChild);
-
 	}
 
-	const togglePopularAMAs = () => {
-		showPopularAMAs = !showPopularAMAs;
-		awesomeAmas.style.display = showPopularAMAs ? 'block':'none';
-		amaList.style.display = !showPopularAMAs ? 'block':'none';
-	};
+	const fetchSpecificAMA = (username,page) =>
+		fetch(`https://api.github.com/repos/${username}/ama/issues?state=closed&page=${page}&per_page=100`)
+			.then(data => data.json());
+
+	const displaySpecificAMA = (data) => {
+
+	}
 
 	const toggleDisplay = (el,value) => {
 		el.style.display = value;
 	}
 
-	fetchData().then(data => displayData(data));
+	fetchPopularAMAs().then(data => displayPopularAMAs(data));
 
 	let showPopularAMAs = true;
 	const form = document.getElementById('search-form');
@@ -44,28 +45,38 @@ document.addEventListener('DOMContentLoaded', function () {
 	const amaList = document.getElementById('ama-list');
 	const input = document.getElementsByName('search-input');
 	const nooby = document.getElementById('nooby');
-	const awe = document.getElementById('awe');
-	const avatar = document.getElementsByClassName('avatar-img');
+	const awe = document.getElementsByClassName('awe');
+	let avatar;
+
 	toggleDisplay(awesomeAmas,'none');
 	toggleDisplay(amaList,'none');
 
-	awe.addEventListener('click',() => {
-		toggleDisplay(awesomeAmas,'block');
-		toggleDisplay(nooby,'none');
-	});
-
-	Array.from(avatar).map(img =>
-			img.addEventListener('click',body,() => {
-				console.log('hi');
-				toggleDisplay(awesomeAmas,'none');
-				toggleDisplay(amaList,'block');
-		})
-	);
+	for (let a of awe) {
+		a.addEventListener('click',() => {
+			toggleDisplay(awesomeAmas,'block');
+			toggleDisplay(nooby,'none');
+			toggleDisplay(amaList,'none');
+			avatar = document.getElementsByClassName('avatar-img');
+			Array.from(avatar).map(img =>
+					img.addEventListener('click',() => {
+						toggleDisplay(awesomeAmas,'none');
+						toggleDisplay(nooby,'none');
+						toggleDisplay(amaList,'block');
+				})
+			);
+			Array.from(document.getElementsByTagName('a')).map(anchor => anchor.className += ' link white');
+		});
+	}
 
 	form.addEventListener('submit',(e) => {
 		e.preventDefault();
-		if(input[0].value.trim().length === 0)
+		const username = input[0].value.trim();
+		if(username.length === 0)
 			return;
+		toggleDisplay(amaList,'block');
+		toggleDisplay(awesomeAmas,'none');
+		toggleDisplay(nooby,'none');
+		fetchSpecificAMA(username,page).then(d => displaySpecificAMA(d));
 	});
 
 });
