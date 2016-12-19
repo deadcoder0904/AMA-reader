@@ -12,7 +12,7 @@ First, install all modules using `yarn`, then build script using `yarn start`, t
 
 ### (2) Awesome AMAs
 
-![Awesome AMAs](http://imgur.com/CIoHZ1d.png)
+![Awesome AMAs](http://imgur.com/fNSCjtT.png)
 
 ## License
 

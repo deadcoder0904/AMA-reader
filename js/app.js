@@ -1,7 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+	const client_id = 'c2360ffa5fe8d1c8c28c';
+	const client_secret = 'a18ab7121535f37ec0765f882cd5200cbb25ae7c';
+
+	const expandAnswer = () => {
+
+	};
+
 	const fetchPopularAMAs = () =>
-		fetch('https://raw.githubusercontent.com/deadcoder0904/scrape-amas/master/amas.json')
+		fetch(`https://raw.githubusercontent.com/deadcoder0904/scrape-amas/master/amas.json?client_id=${client_id}&client_secret=${client_secret}`)
 			.then(data => data.json());
 
 	const displayPopularAMAs = (data) => {
@@ -26,11 +33,48 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	const fetchSpecificAMA = (username,page) =>
-		fetch(`https://api.github.com/repos/${username}/ama/issues?state=closed&page=${page}&per_page=100`)
+		fetch(`https://api.github.com/repos/${username}/ama/issues?state=closed&page=${page}&per_page=10&client_id=${client_id}&client_secret=${client_secret}`)
 			.then(data => data.json());
 
-	const displaySpecificAMA = (data) => {
+	const displaySpecificAMA = (data,username) => {
+		const arr = [];
 
+		for (let item of data){
+			const {title, body, user } = item;
+			fetch(`${item.comments_url}?client_id=${client_id}&client_secret=${client_secret}`)
+				.then(res => res.json())
+				.then(ans => {
+					let desc = marked(body).trim() === '' ? 'No Description Provided' : marked(body);
+					let question = item.title.trim().length === 1 ? 'No Title for the Question Provided' : title;
+					let block = `
+							<div class="q ba b--white-40 pa3 pointer">
+									<div class="white f3"> ↪ ${question}</div>
+									<div class="a">
+										<a class='black link f2 pv6' href='https://github.com/${user.login}' target='_blank'>@${user.login}</a>
+										<div class="f4 text-box">
+											${desc}
+										</div>
+							`;
+					for (let a of ans) {
+						block = `
+							${block}
+									<a class='black link f2 pv6' href='https://github.com/${a.user.login}' target='_blank'>@${a.user.login}</a>
+									<div class="f3 text-box">${marked(a.body)}</div>
+							`;
+					}
+					block = `${block}
+							<div class="view_on_github shadow-5 br-pill"><a href='${item.html_url}' target='_blank'>View On GitHub</a></div>
+						</div>
+					</div>`;
+					arr.push(block);
+					const temporary = document.createElement(`div`);
+					temporary.className = 'question-box';
+					temporary.innerHTML = arr.join('');
+					amaList.prepend(temporary);
+			});
+		}
+		toggleDisplay(amaList,'block');
+		expandAnswer();
 	}
 
 	const toggleDisplay = (el,value) => {
@@ -61,7 +105,8 @@ document.addEventListener('DOMContentLoaded', function () {
 					img.addEventListener('click',() => {
 						toggleDisplay(awesomeAmas,'none');
 						toggleDisplay(nooby,'none');
-						toggleDisplay(amaList,'block');
+						const username = img.alt;
+						fetchSpecificAMA(username,1).then(data => displaySpecificAMA(data,username));
 				})
 			);
 			Array.from(document.getElementsByTagName('a')).map(anchor => anchor.className += ' link white');
@@ -73,10 +118,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		const username = input[0].value.trim();
 		if(username.length === 0)
 			return;
-		toggleDisplay(amaList,'block');
+		input[0].value = '';
 		toggleDisplay(awesomeAmas,'none');
 		toggleDisplay(nooby,'none');
-		fetchSpecificAMA(username,page).then(d => displaySpecificAMA(d));
+		fetchSpecificAMA(username,1).then(data => displaySpecificAMA(data,username));
 	});
 
 });

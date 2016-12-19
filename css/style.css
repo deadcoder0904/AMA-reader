@@ -7,24 +7,76 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
+a {
+	color: white;
+	outline: none;
+}
+
 .box {
 	display: flex;
 	flex-wrap: wrap;
+}
+
+.question-box {
+	margin: 50px auto;
+	max-width: 60rem;
+	text-align: left;
+}
+
+.text-box {
+	overflow: hidden;
 }
 
 .items {
 	flex: 1;
 }
 
-.q {
+.view_on_github {
+  display: block;
+  color: white;
+  background: #1d69b1;
+	text-decoration: none;
+  padding: 10px;
+  width: 196px;
+	text-align: center;
+}
+
+.view_on_github a {
+  font-size:1.2rem;
+  color: white;
+}
+
+.text-box {
+	color: white;
+}
+
+.text-box blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+
+.text-box blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+
+.text-box blockquote p {
+  color: #333;
+  display: inline;
 }
 
 .a {
-	display: none;
-	transform: all 1s;
+	max-height: 0;
+	overflow: hidden;
 }
 
-.a.active {
-	display: block;
-	transition: all 1s;
+.q:hover .a {
+	max-height: 100%;
 }
