@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	const fetchSpecificAMA = (username,page) =>
-		fetch(`https://api.github.com/repos/${username}/ama/issues?state=closed&per_page=1000&client_id=${client_id}&client_secret=${client_secret}`)
+		fetch(`https://api.github.com/repos/${username}/ama/issues?state=closed&page=${page}&per_page=1000&client_id=${client_id}&client_secret=${client_secret}`)
 			.then(data => data.json());
 
 	const displaySpecificAMA = (data,username) => {
