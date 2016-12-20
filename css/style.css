@@ -5,6 +5,7 @@ html {
 
 body {
 	font-family: 'Open Sans', sans-serif;
+	user-select: none;
 }
 
 a {
@@ -75,8 +76,5 @@ a {
 .a {
 	max-height: 0;
 	overflow: hidden;
-}
-
-.q:hover .a {
-	max-height: 100%;
+	transition: max-height 0.5s  ease-in-out;
 }

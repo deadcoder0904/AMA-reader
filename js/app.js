@@ -3,8 +3,24 @@ document.addEventListener('DOMContentLoaded', function () {
 	const client_id = 'c2360ffa5fe8d1c8c28c';
 	const client_secret = 'a18ab7121535f37ec0765f882cd5200cbb25ae7c';
 
-	const expandAnswer = () => {
+	const removeElementsByClass = className => {
+    const elements = document.getElementsByClassName(className);
+    while(elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+    }
+	};
 
+	const toggleHeight = (h) => h === '' ? '100%' : '';
+
+	const expandAnswer = () => {
+		amaList.addEventListener('click', (e) => {
+			const clickedElement = e.target;
+			if (clickedElement.classList.contains('q'))
+				clickedElement.children[1].style.maxHeight = toggleHeight(clickedElement.children[1].style.maxHeight);
+			else
+				if (clickedElement.classList.contains('ed'))
+					clickedElement.nextSibling.parentNode.children[1].style.maxHeight = toggleHeight(clickedElement.nextSibling.parentNode.children[1].style.maxHeight);
+		});
 	};
 
 	const fetchPopularAMAs = () =>
@@ -12,45 +28,51 @@ document.addEventListener('DOMContentLoaded', function () {
 			.then(data => data.json());
 
 	const displayPopularAMAs = (data) => {
-		const arr = [];
-
+		const set = new Set();
 		for (let item of data) {
 			const {avatar, description, fullname, username} = item;
-
-			const block = `
+			let block = '';
+			block = `
 				<div class="items fl pa4 tc">
 			  	<img src="${avatar}" class="avatar-img br-100 pa1 ba b--black-10 h4 w4 pointer" alt="${username}" onerror="this.src='https://avatars0.githubusercontent.com/u/1597919?v=3&s=88'" title="Read AMA" /><br />
 				  <a href="https://github.com/${username}" target="_blank" class="link white" title="Visit GitHub Profile">@${fullname}</a>
 					<blockquote class="desc">${description}</blockquote>
 				</div>
 				`;
-			arr.push(block);
+			set.add(block);
 		}
 		const temporary = document.createElement(`div`);
 		temporary.className = 'box';
-		temporary.innerHTML = arr.join('');
+		temporary.innerHTML = Array.from(set).join('');
 		awesomeAmas.insertBefore(temporary,awesomeAmas.lastChild);
 	}
 
 	const fetchSpecificAMA = (username,page) =>
-		fetch(`https://api.github.com/repos/${username}/ama/issues?state=closed&page=${page}&per_page=10&client_id=${client_id}&client_secret=${client_secret}`)
+		fetch(`https://api.github.com/repos/${username}/ama/issues?state=closed&page=${page}&per_page=10000&client_id=${client_id}&client_secret=${client_secret}`)
 			.then(data => data.json());
 
 	const displaySpecificAMA = (data,username) => {
-		const arr = [];
-
-		for (let item of data){
+		if(data.message === 'Not Found' || data.length === 0) {
+			amaList.innerHTML = `<h1 class="f2 black pa3 not-found">No AMA Found for User @${username}</h1>`;
+			toggleDisplay(amaList,'block');
+			toggleDisplay(nooby,'block');
+			return;
+		}
+		let temporary;
+		removeElementsByClass('question-box');
+		for (let item of data) {
 			const {title, body, user } = item;
 			fetch(`${item.comments_url}?client_id=${client_id}&client_secret=${client_secret}`)
 				.then(res => res.json())
 				.then(ans => {
 					let desc = marked(body).trim() === '' ? 'No Description Provided' : marked(body);
 					let question = item.title.trim().length === 1 ? 'No Title for the Question Provided' : title;
-					let block = `
-							<div class="q ba b--white-40 pa3 pointer">
-									<div class="white f3"> ↪ ${question}</div>
-									<div class="a">
-										<a class='black link f2 pv6' href='https://github.com/${user.login}' target='_blank'>@${user.login}</a>
+					let block = '';
+					block = `
+							<div class="q ba b--white-40 pa3 pointer ed">
+									<div class="white f3 ed"> ↪ ${question}<hr /></div>
+									<div class="a ed">
+										<a class='black link f2' href='https://github.com/${user.login}' target='_blank'>@${user.login}</a>
 										<div class="f4 text-box">
 											${desc}
 										</div>
@@ -58,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					for (let a of ans) {
 						block = `
 							${block}
-									<a class='black link f2 pv6' href='https://github.com/${a.user.login}' target='_blank'>@${a.user.login}</a>
+									<a class='black link f2' href='https://github.com/${a.user.login}' target='_blank'>@${a.user.login}</a>
 									<div class="f3 text-box">${marked(a.body)}</div>
 							`;
 					}
@@ -66,13 +88,14 @@ document.addEventListener('DOMContentLoaded', function () {
 							<div class="view_on_github shadow-5 br-pill"><a href='${item.html_url}' target='_blank'>View On GitHub</a></div>
 						</div>
 					</div>`;
-					arr.push(block);
-					const temporary = document.createElement(`div`);
+					temporary = document.createElement(`div`);
 					temporary.className = 'question-box';
-					temporary.innerHTML = arr.join('');
+					temporary.innerHTML = block;
 					amaList.prepend(temporary);
+					console.log('temporary',temporary);
 			});
 		}
+		removeElementsByClass('not-found');
 		toggleDisplay(amaList,'block');
 		expandAnswer();
 	}
@@ -95,23 +118,30 @@ document.addEventListener('DOMContentLoaded', function () {
 	toggleDisplay(awesomeAmas,'none');
 	toggleDisplay(amaList,'none');
 
-	for (let a of awe) {
-		a.addEventListener('click',() => {
+	const grabAwesomeAMAs = (username) => {
+			console.log('hi');
+			toggleDisplay(awesomeAmas,'none');
+			toggleDisplay(nooby,'none');
+			removeElementsByClass('not-found');
+			fetchSpecificAMA(username,1).then(data => displaySpecificAMA(data,username));
+	};
+
+	const hereClicked = () => {
 			toggleDisplay(awesomeAmas,'block');
 			toggleDisplay(nooby,'none');
 			toggleDisplay(amaList,'none');
-			avatar = document.getElementsByClassName('avatar-img');
-			Array.from(avatar).map(img =>
-					img.addEventListener('click',() => {
-						toggleDisplay(awesomeAmas,'none');
-						toggleDisplay(nooby,'none');
-						const username = img.alt;
-						fetchSpecificAMA(username,1).then(data => displaySpecificAMA(data,username));
-				})
+			avatar = Array.from(document.getElementsByClassName('avatar-img'));
+
+			avatar.forEach(img =>
+				img.addEventListener('click',
+					() => grabAwesomeAMAs(img.alt)
+				)
 			);
 			Array.from(document.getElementsByTagName('a')).map(anchor => anchor.className += ' link white');
-		});
-	}
+	};
+
+	for(let i = 0; i < awe.length; i++)
+		awe[i].addEventListener('click',hereClicked);
 
 	form.addEventListener('submit',(e) => {
 		e.preventDefault();
@@ -121,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		input[0].value = '';
 		toggleDisplay(awesomeAmas,'none');
 		toggleDisplay(nooby,'none');
+		removeElementsByClass('not-found');
 		fetchSpecificAMA(username,1).then(data => displaySpecificAMA(data,username));
 	});
 
