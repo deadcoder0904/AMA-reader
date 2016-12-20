@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	const fetchSpecificAMA = (username,page) =>
-		fetch(`https://api.github.com/repos/${username}/ama/issues?state=closed&page=${page}&per_page=10000&client_id=${client_id}&client_secret=${client_secret}`)
+		fetch(`https://api.github.com/repos/${username}/ama/issues?state=closed&per_page=1000&client_id=${client_id}&client_secret=${client_secret}`)
 			.then(data => data.json());
 
 	const displaySpecificAMA = (data,username) => {
@@ -92,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function () {
 					temporary.className = 'question-box';
 					temporary.innerHTML = block;
 					amaList.prepend(temporary);
-					console.log('temporary',temporary);
 			});
 		}
 		removeElementsByClass('not-found');
@@ -119,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	toggleDisplay(amaList,'none');
 
 	const grabAwesomeAMAs = (username) => {
-			console.log('hi');
 			toggleDisplay(awesomeAmas,'none');
 			toggleDisplay(nooby,'none');
 			removeElementsByClass('not-found');
