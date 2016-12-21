@@ -28,6 +28,10 @@ This is a project made to learn just HTML5, CSS3 & JS without any frameworks.
 
 ![Awesome AMAs](http://imgur.com/fNSCjtT.png)
 
+### (3) Read AMA
+
+![Read AMAs](http://imgur.com/0jNeYdp.png)
+
 ## License
 
 [MIT](LICENSE.md) © [Akshay Kadam](https://github.com/deadcoder0904)
